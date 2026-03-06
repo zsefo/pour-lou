@@ -372,44 +372,19 @@
 
   <!-- PHOTOS -->
   <div class="photos-grid">
-    <div class="photo-slot" id="slot0" onclick="triggerUpload(0)">
-      <div class="photo-placeholder" id="ph0">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <rect x="3" y="3" width="18" height="18" rx="4"/>
-          <circle cx="8.5" cy="8.5" r="1.5"/>
-          <path d="M21 15l-5-5L5 21"/>
-        </svg>
-        Ajoute une photo
-      </div>
+    <div class="photo-slot">
+      <img src="Lou1.jpg" alt="">
       <div class="photo-overlay"></div>
-      <div class="photo-change-hint">changer</div>
     </div>
-    <div class="photo-slot" id="slot1" onclick="triggerUpload(1)">
-      <div class="photo-placeholder" id="ph1">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <rect x="3" y="3" width="18" height="18" rx="4"/>
-          <circle cx="8.5" cy="8.5" r="1.5"/>
-          <path d="M21 15l-5-5L5 21"/>
-        </svg>
-        Photo
-      </div>
+    <div class="photo-slot">
+      <img src="Lou2.jpg" alt="">
       <div class="photo-overlay"></div>
-      <div class="photo-change-hint">changer</div>
     </div>
-    <div class="photo-slot" id="slot2" onclick="triggerUpload(2)">
-      <div class="photo-placeholder" id="ph2">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-          <rect x="3" y="3" width="18" height="18" rx="4"/>
-          <circle cx="8.5" cy="8.5" r="1.5"/>
-          <path d="M21 15l-5-5L5 21"/>
-        </svg>
-        Photo
-      </div>
+    <div class="photo-slot">
+      <img src="Lou3.jpg" alt="">
       <div class="photo-overlay"></div>
-      <div class="photo-change-hint">changer</div>
     </div>
   </div>
-  <input type="file" id="fileInput" accept="image/*">
 
   <!-- DIVIDER -->
   <div class="divider">
@@ -515,31 +490,6 @@
 
   updateCountdown();
   setInterval(updateCountdown, 1000);
-
-  // PHOTO UPLOAD
-  let currentSlot = 0;
-  function triggerUpload(slot) {
-    currentSlot = slot;
-    document.getElementById('fileInput').click();
-  }
-  document.getElementById('fileInput').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(ev) {
-      const slot = document.getElementById('slot' + currentSlot);
-      const ph = document.getElementById('ph' + currentSlot);
-      let img = slot.querySelector('img');
-      if (!img) {
-        img = document.createElement('img');
-        slot.insertBefore(img, slot.firstChild);
-      }
-      img.src = ev.target.result;
-      ph.style.display = 'none';
-    };
-    reader.readAsDataURL(file);
-    this.value = '';
-  });
 
   // FLOATING PETALS
   const petalContainer = document.getElementById('petals');
