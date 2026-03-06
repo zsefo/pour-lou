@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pour Lou ♥</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --rose: #e8a0a0;
+    --rose-deep: #c97070;
+    --cream: #fdf6f0;
+    --warm: #f5e6d8;
+    --text-dark: #3a2525;
+    --text-mid: #7a4a4a;
+    --gold: #d4a574;
+  }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: var(--text-dark);
+  }
+
+  /* BACKGROUND */
+  .bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(232,160,160,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 90%, rgba(212,165,116,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 100% 100% at 50% 50%, #fdf6f0 0%, #f9ece0 100%);
+  }
+
+  /* FLOATING PETALS */
+  .petal {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    animation: fall linear infinite;
+    font-size: 1rem;
+  }
+  @keyframes fall {
+    0% { opacity: 0; transform: translateY(-20px) rotate(0deg); }
+    10% { opacity: 0.4; }
+    90% { opacity: 0.2; }
+    100% { opacity: 0; transform: translateY(105vh) rotate(360deg); }
+  }
+
+  /* MAIN LAYOUT */
+  .page {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1.2rem 3rem;
+    gap: 0;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    margin-bottom: 1.8rem;
+    animation: fadeUp 1.2s ease both;
+  }
+  .header .intro {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.05rem;
+    color: var(--text-mid);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+    opacity: 0.85;
+  }
+  .header h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2.8rem, 10vw, 4.5rem);
+    color: var(--text-dark);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+  .header h1 span {
+    color: var(--rose-deep);
+  }
+  .heart-icon {
+    display: inline-block;
+    color: var(--rose-deep);
+    animation: heartbeat 1.6s ease-in-out infinite;
+    font-size: 1.3rem;
+    vertical-align: middle;
+    margin-left: 0.2rem;
+  }
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    14% { transform: scale(1.25); }
+    28% { transform: scale(1); }
+    42% { transform: scale(1.15); }
+    56% { transform: scale(1); }
+  }
+
+  /* PHOTOS SECTION */
+  .photos-grid {
+    width: 100%;
+    max-width: 420px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.7rem;
+    margin-bottom: 1.8rem;
+    animation: fadeUp 1.2s 0.2s ease both;
+  }
+  .photo-slot {
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    background: var(--warm);
+    border: 2px solid rgba(232,160,160,0.3);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 20px rgba(180,100,100,0.08);
+  }
+  .photo-slot:hover { transform: scale(1.02); box-shadow: 0 8px 30px rgba(180,100,100,0.15); }
+  .photo-slot:first-child {
+    grid-column: 1 / 3;
+    aspect-ratio: 16/9;
+  }
+  .photo-slot:not(:first-child) {
+    aspect-ratio: 1;
+  }
+  .photo-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .photo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: var(--rose-deep);
+    min-height: 120px;
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+  }
+  .photo-placeholder:hover { opacity: 1; }
+  .photo-placeholder svg { width: 28px; height: 28px; }
+  input[type="file"] { display: none; }
+  .photo-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 40%, rgba(58,37,37,0.3) 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .photo-slot:hover .photo-overlay { opacity: 1; }
+  .photo-change-hint {
+    position: absolute;
+    bottom: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.65rem;
+    color: white;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .photo-slot:hover .photo-change-hint { opacity: 1; }
+
+  /* DIVIDER */
+  .divider {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+    animation: fadeUp 1.2s 0.3s ease both;
+  }
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(201,112,112,0.3), transparent);
+  }
+  .divider-icon {
+    color: var(--rose-deep);
+    font-size: 0.9rem;
+    opacity: 0.7;
+  }
+
+  /* COUNTDOWN */
+  .countdown-section {
+    width: 100%;
+    max-width: 420px;
+    margin-bottom: 1.8rem;
+    animation: fadeUp 1.2s 0.4s ease both;
+  }
+  .countdown-label {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--text-mid);
+    margin-bottom: 1.2rem;
+    opacity: 0.8;
+    letter-spacing: 0.03em;
+  }
+  .countdown-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.7rem;
+  }
+  .count-box {
+    background: white;
+    border: 1.5px solid rgba(232,160,160,0.25);
+    border-radius: 16px;
+    padding: 1rem 0.5rem;
+    text-align: center;
+    box-shadow: 0 2px 16px rgba(180,100,100,0.07);
+    position: relative;
+    overflow: hidden;
+  }
+  .count-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(to right, var(--rose), var(--rose-deep));
+    border-radius: 16px 16px 0 0;
+  }
+  .count-number {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 7vw, 2.8rem);
+    font-weight: 300;
+    color: var(--text-dark);
+    line-height: 1;
+    display: block;
+    transition: transform 0.2s ease;
+  }
+  .count-number.tick {
+    animation: numTick 0.3s ease;
+  }
+  @keyframes numTick {
+    0% { transform: translateY(-8px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  .count-unit {
+    font-size: 0.6rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--rose-deep);
+    margin-top: 0.3rem;
+    display: block;
+    opacity: 0.8;
+  }
+
+  /* MESSAGE */
+  .message-section {
+    width: 100%;
+    max-width: 420px;
+    background: white;
+    border: 1.5px solid rgba(232,160,160,0.2);
+    border-radius: 20px;
+    padding: 1.5rem 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(180,100,100,0.06);
+    margin-bottom: 1.5rem;
+    animation: fadeUp 1.2s 0.5s ease both;
+  }
+  .message-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: var(--text-mid);
+    line-height: 1.75;
+    letter-spacing: 0.02em;
+  }
+  .message-sig {
+    margin-top: 1rem;
+    font-size: 0.7rem;
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--rose-deep);
+    opacity: 0.7;
+  }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    animation: fadeUp 1.2s 0.6s ease both;
+  }
+  .footer p {
+    font-size: 0.65rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-mid);
+    opacity: 0.4;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ARRIVED STATE */
+  .arrived-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(253,246,240,0.97);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    animation: fadeUp 1s ease both;
+  }
+  .arrived-overlay.show { display: flex; }
+  .arrived-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 12vw, 5rem);
+    font-weight: 300;
+    color: var(--rose-deep);
+    margin-bottom: 1rem;
+  }
+  .arrived-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    color: var(--text-mid);
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer"></div>
+
+<!-- Floating petals -->
+<div id="petals"></div>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <p class="intro">Petit cadeau pour toi</p>
+    <h1>Lou <span class="heart-icon">♥</span></h1>
+  </div>
+
+  <!-- PHOTOS -->
+  <div class="photos-grid">
+    <div class="photo-slot" id="slot0" onclick="triggerUpload(0)">
+      <div class="photo-placeholder" id="ph0">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="4"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <path d="M21 15l-5-5L5 21"/>
+        </svg>
+        Ajoute une photo
+      </div>
+      <div class="photo-overlay"></div>
+      <div class="photo-change-hint">changer</div>
+    </div>
+    <div class="photo-slot" id="slot1" onclick="triggerUpload(1)">
+      <div class="photo-placeholder" id="ph1">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="4"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <path d="M21 15l-5-5L5 21"/>
+        </svg>
+        Photo
+      </div>
+      <div class="photo-overlay"></div>
+      <div class="photo-change-hint">changer</div>
+    </div>
+    <div class="photo-slot" id="slot2" onclick="triggerUpload(2)">
+      <div class="photo-placeholder" id="ph2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="4"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <path d="M21 15l-5-5L5 21"/>
+        </svg>
+        Photo
+      </div>
+      <div class="photo-overlay"></div>
+      <div class="photo-change-hint">changer</div>
+    </div>
+  </div>
+  <input type="file" id="fileInput" accept="image/*">
+
+  <!-- DIVIDER -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-icon">✦</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- COUNTDOWN -->
+  <div class="countdown-section">
+    <p class="countdown-label">on se retrouve dans...</p>
+    <div class="countdown-grid">
+      <div class="count-box">
+        <span class="count-number" id="days">--</span>
+        <span class="count-unit">jours</span>
+      </div>
+      <div class="count-box">
+        <span class="count-number" id="hours">--</span>
+        <span class="count-unit">heures</span>
+      </div>
+      <div class="count-box">
+        <span class="count-number" id="minutes">--</span>
+        <span class="count-unit">minutes</span>
+      </div>
+      <div class="count-box">
+        <span class="count-number" id="seconds">--</span>
+        <span class="count-unit">secondes</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-icon">✦</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- MESSAGE -->
+  <div class="message-section">
+    <p class="message-text">
+      Chaque seconde qui passe<br>
+      nous rapproche ♥
+    </p>
+    <p class="message-sig">avec tout mon amour ♥</p>
+  </div>
+
+  <div class="footer">
+    <p>fait avec le cœur, rien que pour toi</p>
+  </div>
+
+</div>
+
+<!-- ARRIVED STATE -->
+<div class="arrived-overlay" id="arrivedOverlay">
+  <div class="arrived-title">♥</div>
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:300;color:#3a2525;margin-bottom:1rem;">C'est le jour !</h2>
+  <p class="arrived-sub">Le moment qu'on attendait est enfin là.</p>
+</div>
+
+<script>
+  // TARGET DATE: 21 mars 2026 à 4h05
+  const target = new Date('2026-03-21T04:05:00');
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function updateCountdown() {
+    const now = new Date();
+    const diff = target - now;
+
+    if (diff <= 0) {
+      document.getElementById('arrivedOverlay').classList.add('show');
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    const els = {
+      days: document.getElementById('days'),
+      hours: document.getElementById('hours'),
+      minutes: document.getElementById('minutes'),
+      seconds: document.getElementById('seconds')
+    };
+
+    function setVal(el, val) {
+      const str = pad(val);
+      if (el.textContent !== str) {
+        el.textContent = str;
+        el.classList.remove('tick');
+        void el.offsetWidth;
+        el.classList.add('tick');
+      }
+    }
+
+    setVal(els.days, days);
+    setVal(els.hours, hours);
+    setVal(els.minutes, minutes);
+    setVal(els.seconds, seconds);
+  }
+
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // PHOTO UPLOAD
+  let currentSlot = 0;
+  function triggerUpload(slot) {
+    currentSlot = slot;
+    document.getElementById('fileInput').click();
+  }
+  document.getElementById('fileInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const slot = document.getElementById('slot' + currentSlot);
+      const ph = document.getElementById('ph' + currentSlot);
+      let img = slot.querySelector('img');
+      if (!img) {
+        img = document.createElement('img');
+        slot.insertBefore(img, slot.firstChild);
+      }
+      img.src = ev.target.result;
+      ph.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+    this.value = '';
+  });
+
+  // FLOATING PETALS
+  const petalContainer = document.getElementById('petals');
+  const petalSymbols = ['✿', '❀', '✾', '❁', '·'];
+  for (let i = 0; i < 18; i++) {
+    const p = document.createElement('div');
+    p.className = 'petal';
+    p.textContent = petalSymbols[Math.floor(Math.random() * petalSymbols.length)];
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.fontSize = (0.6 + Math.random() * 0.8) + 'rem';
+    p.style.color = `rgba(${180 + Math.floor(Math.random()*40)}, ${90 + Math.floor(Math.random()*50)}, ${90 + Math.floor(Math.random()*40)}, 0.5)`;
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = (Math.random() * 15) + 's';
+    petalContainer.appendChild(p);
+  }
+</script>
+</body>
+</html>
